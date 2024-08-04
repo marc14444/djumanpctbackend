@@ -3,7 +3,7 @@ import multer from "multer";
 import {
   createMetier,
   getAllMetiers,
-} from "../Controllers/MetiersController.js";
+} from "./../Controllers/metiersController.js";
 
 const router = express.Router();
 
