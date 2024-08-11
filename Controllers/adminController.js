@@ -67,7 +67,7 @@ export const signinAdmin = async (req, res) => {
       expiresIn: "24h",
     });
 
-    res.status(200).json({ message: "Connexion reussie", token, status: true });
+    res.status(200).json({ message: "Connexion reussie", token, status: true , data: admin });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Erreur serveur", status: false });
