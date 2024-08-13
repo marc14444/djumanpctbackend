@@ -40,6 +40,9 @@ const artisanSchema = new mongoose.Schema({
   alphabetisation: { type: String, required: true },
   longitude: { type: Number, required: true },
   latitude: { type: Number, required: true },
+  experience: { type: Number, required: true },
+  fermeture: { type: String, required: true },
+  ouverture: { type: String, required: true },
   notes: [
     {
       note: { type: Number, required: false, default: 0 },

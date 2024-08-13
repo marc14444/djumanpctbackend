@@ -27,7 +27,10 @@ export const signupArtisan = async (req, res) => {
     alphabetisation,
     nomEntreprise,
     longitude,
-    latitude
+    latitude,
+    ouverture,
+    fermeture,
+    experience,
 
   } = req.body;
   const { recto, verso, selfie } = req.files;
@@ -46,7 +49,10 @@ export const signupArtisan = async (req, res) => {
       !metier ||
       !passwordArtisan ||
       !confirmPasswordArtisan ||
-      !alphabetisation
+      !alphabetisation ||
+      !ouverture ||
+      !fermeture ||
+      !experience
     ) {
       deleteUploadedFiles(req.files);
       return res
@@ -139,6 +145,9 @@ export const signupArtisan = async (req, res) => {
       nomEntreprise,
       longitude,
       latitude,
+      ouverture,
+      fermeture,
+      experience,
     });
 
     // Enregistrer l'artisan dans la base de données
