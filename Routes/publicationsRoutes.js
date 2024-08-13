@@ -6,26 +6,23 @@ import {
   getAllArtisansPublications,
   getAllPublications,
   getOnePublication,
+  getAllPublicationsByArtisan
 } from "../Controllers/publicationsController.js";
 
 const router = express.Router();
 
-router.post("/add-publication", upload, authArtisan, addPublication);
+// Route pour ajouter une publication (avec upload de fichiers)
+router.post("/add-publication", authArtisan, upload, addPublication);
 
-router.get(
-  "/get-one-publication/:idPub",
-  upload,
-  authArtisan,
-  getOnePublication
-);
+// Route pour obtenir une seule publication par ID
+router.get("/get-one-publication/:idPub", authArtisan, getOnePublication);
 
-router.get(
-  "/get-all-publications-artisan-connected",
-  upload,
-  authArtisan,
-  getAllArtisansPublications
-);
+// Route pour obtenir toutes les publications d'un artisan connecté
+router.get("/get-all-publications-artisan-connected", authArtisan, getAllArtisansPublications);
 
-router.get("/get-all-publications", upload, getAllPublications);
+// Route pour obtenir toutes les publications (avec option de filtrer par artisanId)
+router.get("/get-all-publications", getAllPublications);
+
+router.get("/get-publications-by-artisan/:artisanId", getAllPublicationsByArtisan);
 
 export default router;
