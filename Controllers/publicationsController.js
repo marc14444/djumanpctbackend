@@ -15,10 +15,10 @@ export const addPublication = async (req, res) => {
         .json({ message: "Artisan introuvable", status: false });
     }
     const imagePath = image
-      ? `${req.protocol}://${req.get("host")}/assets/${image[0].filename}`
+      ? `${req.protocol}://${req.get("host")}/assets/photos_artisans/${image[0].filename}`
       : null;
     const videoPath = video
-      ? `${req.protocol}://${req.get("host")}/assets/${video[0].filename}`
+      ? `${req.protocol}://${req.get("host")}/assets/photos_artisans/${video[0].filename}`
       : null;
 
     const publication = new Publications({
