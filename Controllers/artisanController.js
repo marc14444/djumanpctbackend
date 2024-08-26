@@ -282,11 +282,28 @@ export const getAllArtisans = async (req, res) => {
 export const updateArtisanProfil = async (req, res) => {
   try {
     const idArtisan = req.auth.artisanId;
+    const { passwordArtisan, ...rest } = req.body;
+
+    // Vérifiez si un nouveau mot de passe est fourni
+    if (passwordArtisan) {
+      // Vérifiez la longueur du mot de passe
+      if (passwordArtisan.length < 6 || passwordArtisan.length > 10) {
+        return res.status(400).json({
+          message: "Le mot de passe doit être entre 6 et 10 caractères",
+          status: false,
+        });
+      }
+
+      // Hachez le mot de passe
+      rest.passwordArtisan = await bcrypt.hash(passwordArtisan, 10);
+    }
+
     const updatedArtisan = await Artisans.findByIdAndUpdate(
       idArtisan,
-      req.body,
+      rest,
       {
         new: true,
+        runValidators: true, // Applique les validations définies dans le modèle
       }
     );
 
@@ -298,19 +315,9 @@ export const updateArtisanProfil = async (req, res) => {
       });
     }
 
-    const verifArtisan = await Artisans.find({ _id: idArtisan });
-
-    if (!verifArtisan) {
-      return res.status(404).json({
-        error: "Vous ne pouvez pas modifier ce profil",
-        message: "Vous ne pouvez pas modifier ce profil",
-        status: false,
-      });
-    }
-
     res.status(200).json({
       updatedArtisan,
-      message: "Profil mis à jour avec succes",
+      message: "Profil mis à jour avec succès",
       status: true,
     });
   } catch (error) {
@@ -318,6 +325,7 @@ export const updateArtisanProfil = async (req, res) => {
     res.status(500).json({ message: "Une erreur est survenue", status: false });
   }
 };
+
 
 export const updatePasswordArtisan = async (req, res) => {
   try {
