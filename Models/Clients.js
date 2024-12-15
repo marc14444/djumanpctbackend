@@ -8,7 +8,7 @@ let clientsSchema = mongoose.Schema({
   },
   prenomClient: {
     type: String,
-    required: [true, "Veuillez entrer votre prenom !"],
+    required: [true, "Veuillez entrer votre prénom !"],
   },
   telClient: {
     type: String,
@@ -21,11 +21,19 @@ let clientsSchema = mongoose.Schema({
     unique: true,
   },
   passwordClient: { type: String, required: true },
-  confirmPassword: { type: String, required: true },
+  confirmPassword: { type: String, required: false },
   roleClient: { type: String, required: false, default: "client" },
   statusClient: { type: Boolean, required: true, default: true },
+  profileImage: { 
+    type: String, 
+    default: null // Si aucun upload d'image, la valeur sera `null` 
+  },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
   createdAt: { type: Date, default: Date.now() },
   updatedAt: { type: Date, default: Date.now() },
 });
+
 clientsSchema.plugin(uniqueValidator);
-export default clientsSchema = mongoose.model("Clients", clientsSchema);
+
+export default mongoose.model("Clients", clientsSchema);

@@ -1,4 +1,4 @@
-import express from "express";
+/* import express from "express";
 import {
   forgotPassword,
   verifyCode,
@@ -17,3 +17,4 @@ router.post("/verify-code", upload.any(), verifyCode);
 router.post("/reset-password", upload.any(), resetPassword);
 
 export default router;
+ */

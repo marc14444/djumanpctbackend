@@ -5,8 +5,8 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 import adminRoutes from "./Routes/adminRoutes.js";
 import clientsRoutes from "./Routes/clientsRoutes.js";
-import confirmationEmailRoutes from "./Routes/confirmationEmailRoutes.js";
-import forgotPasswordRoutes from "./Routes/forgotPasswordRoutes.js";
+//import confirmationEmailRoutes from "./Routes/confirmationEmailRoutes.js";
+//import forgotPasswordRoutes from "./Routes/forgotPasswordRoutes.js";
 import artisanRoutes from "./Routes/artisanRoutes.js";
 import searchRoutes from "./Routes/searchRoutes.js";
 import metiersRoutes from "./Routes/metiersRoutes.js";
@@ -45,10 +45,10 @@ app.use("/api/clients", clientsRoutes);
 app.use("/api/artisans", artisanRoutes);
 
 //Confirmation Email Routes
-app.use("/api/confirmation-email", confirmationEmailRoutes);
+//app.use("/api/confirmation-email", confirmationEmailRoutes);
 
 //Forgot Password Routes
-app.use("/api/forgot-password", forgotPasswordRoutes);
+//app.use("/api/forgot-password", forgotPasswordRoutes);
 
 //Routes for metiers
 app.use("/api/metiers", metiersRoutes);

@@ -13,11 +13,6 @@ const artisanSchema = new mongoose.Schema({
     type: String,
     required: [true, "Veuillez entrer le nom de votre entreprise"],
   },
-  /* artisanUsername: {
-    type: String,
-    required: [true, "Veuillez enter un nom d'utilisateur"],
-    unique: [true, "Ce nom d'utilisateur existe déja !"],
-  }, */
   telArtisan: {
     type: String,
     required: true,
@@ -54,8 +49,13 @@ const artisanSchema = new mongoose.Schema({
     },
   ],
   noteCount: { type: Number, required: false, default: 0 },
+  // Champ pour activer l'artisan après confirmation par email
+  isActive: { type: Boolean, default: false },
+  // Token pour l'activation du compte via l'email
+  activationToken: { type: String, required: false },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
   averageNote: { type: Number, required: false, default: 0 },
-  // createdAt: { type: String, required: true },
   statusArtisan: { type: Boolean, required: true, default: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
