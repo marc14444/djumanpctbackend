@@ -49,6 +49,13 @@ const artisanSchema = new mongoose.Schema({
     },
   ],
   noteCount: { type: Number, required: false, default: 0 },
+  disponibilites: [
+    {
+      jour: { type: String, required: false }, // ex: 'Lundi', 'Mardi', etc.
+      heureDebut: { type: String, required: false }, // ex: '09:00'
+      heureFin: { type: String, required: false }, // ex: '17:00'
+    }
+  ],
   // Champ pour activer l'artisan après confirmation par email
   isActive: { type: Boolean, default: false },
   // Token pour l'activation du compte via l'email

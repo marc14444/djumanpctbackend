@@ -1,5 +1,4 @@
 import express from "express";
-import upload from "../middleware/multer-config.js";
 import {
   signupArtisan,
   loginArtisan,
@@ -9,10 +8,21 @@ import {
   deletedArtisanAccount,
   demandeReinitialisationMotDePasse,
   reinitialiserMotDePasse,
+  ajouterDisponibilites,
+  updateDisponibilites,
+  getDisponibilites,
+  deleteDisponibiliteById,
 } from "../Controllers/artisanController.js";
 import authArtisan from "../middleware/authArtisan.js";
-import authAdmin from "../middleware/authAdmin.js";
 import { uploader } from "../middleware/multerArtisan.js";
+import uploadpub from "../middleware/multerPublication.js";
+import { 
+  createPublication,
+  getPublication,
+  getAllPublicationsByArtisan,
+  updatePublication,
+  deletePublication
+} from "../Controllers/publicationsController.js";
 
 const router = express.Router();
 
@@ -39,5 +49,33 @@ router.post("/demande-reinitialisation", demandeReinitialisationMotDePasse);
 
 // Route pour réinitialiser le mot de passe
 router.post("/reinitialiser-mot-de-passe/:token", reinitialiserMotDePasse);
+
+// Route pour ajouter des disponibilités
+router.post("/ajouter-disponibilites", authArtisan, ajouterDisponibilites);
+
+// Route pour mettre à jour les disponibilités
+router.put("/update-disponibilites", authArtisan, updateDisponibilites);
+
+// Route pour obtenir les disponibilités
+router.get("/get-disponibilites", authArtisan, getDisponibilites);
+
+// Route pour supprimer les disponibilités
+router.delete("/disponibilites/:id", authArtisan, deleteDisponibiliteById);
+
+// Route pour ajouter une publication (avec upload de fichiers)
+router.post("/add-publication", authArtisan, uploadpub, createPublication);
+
+// Route pour récupérer une publication
+router.get("/get-publication/:idPublication", authArtisan, getPublication);
+
+// Route pour récupérer toutes les publications d'un artisan
+router.get("/get-all-publications-by-artisan", authArtisan, getAllPublicationsByArtisan);
+
+// Route pour modifier une publication
+router.put('/publications/:idPublication', authArtisan, updatePublication);
+
+// Route pour supprimer une publication
+router.delete('/publications/:idPublication', authArtisan, deletePublication);
+
 
 export default router;

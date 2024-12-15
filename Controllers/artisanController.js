@@ -512,3 +512,157 @@ export async function reinitialiserMotDePasse(req, res) {
     });
   }
 }
+
+// Ajouter des disponibilités
+export async function ajouterDisponibilites(req, res) {
+  const { disponibilites } = req.body; // Tableau de disponibilités
+  const artisanId = req.auth.artisanId; // Récupérer l'ID de l'artisan à partir du middleware d'authentification
+
+  try {
+    // Trouver l'artisan par ID
+    const artisan = await Artisans.findById(artisanId);
+    if (!artisan) {
+      return res.status(404).json({ message: "Artisan non trouvé." });
+    }
+
+    // Vérifier si les créneaux sont déjà ajoutés
+    const disponibilitesExistantes = artisan.disponibilites || [];
+    const disponibilitesDupliquees = disponibilites.filter((nouvelleDispo) =>
+      disponibilitesExistantes.some(
+        (existante) =>
+          existante.jour === nouvelleDispo.jour &&
+          existante.heureDebut === nouvelleDispo.heureDebut &&
+          existante.heureFin === nouvelleDispo.heureFin
+      )
+    );
+
+    if (disponibilitesDupliquees.length > 0) {
+      return res.status(400).json({
+        message: "Certains créneaux sont déjà choisis.",
+        disponibilitesDupliquees,
+      });
+    }
+
+    // Ajouter les nouvelles disponibilités non dupliquées
+    artisan.disponibilites.push(...disponibilites);
+
+    // Sauvegarder les modifications
+    await artisan.save();
+
+    res.status(200).json({
+      message: "Disponibilités ajoutées avec succès.",
+      disponibilites: artisan.disponibilites,
+    });
+  } catch (error) {
+    console.error("Erreur lors de l'ajout des disponibilités:", error);
+    res.status(500).json({ message: "Erreur lors de l'ajout des disponibilités." });
+  }
+}
+// Modification des disponibilités
+export async function updateDisponibilites(req, res) {
+  const { disponibilites } = req.body; // Tableau de disponibilités
+  const artisanId = req.auth.artisanId; // Récupérer l'ID de l'artisan à partir du middleware d'authentification
+
+  try {
+    // Trouver l'artisan par ID
+    const artisan = await Artisans.findById(artisanId);
+    if (!artisan) {
+      return res.status(404).json({ message: "Artisan non trouvé." });
+    }
+
+    // Vérifier si les nouvelles disponibilités sont identiques aux actuelles
+    const disponibilitesIdentiques =
+      disponibilites.length === artisan.disponibilites.length &&
+      disponibilites.every((nouvelleDispo) =>
+        artisan.disponibilites.some(
+          (existante) =>
+            existante.jour === nouvelleDispo.jour &&
+            existante.heureDebut === nouvelleDispo.heureDebut &&
+            existante.heureFin === nouvelleDispo.heureFin
+        )
+      );
+
+    if (disponibilitesIdentiques) {
+      return res.status(400).json({
+        message: "Les disponibilités fournies sont déjà enregistrées.",
+        disponibilites: artisan.disponibilites,
+      });
+    }
+
+    // Remplacer les disponibilités actuelles par les nouvelles
+    artisan.disponibilites = disponibilites;
+
+    // Sauvegarder les modifications
+    await artisan.save();
+
+    res.status(200).json({
+      message: "Disponibilités mises à jour avec succès.",
+      disponibilites: artisan.disponibilites,
+    });
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour des disponibilités:", error);
+    res.status(500).json({ message: "Erreur lors de la mise à jour des disponibilités." });
+  }
+};
+
+// obtenir les disponibilités d'un artisan
+export async function getDisponibilites(req, res) {
+  const artisanId = req.auth.artisanId; // Récupérer l'ID de l'artisan à partir du middleware d'authentification
+
+  try {
+    // Trouver l'artisan par ID
+    const artisan = await Artisans.findById(artisanId);
+    if (!artisan) {
+      return res.status(404).json({ message: "Artisan non trouvé." });
+    }
+
+    res.status(200).json({
+      message: "Disponibilités récupérées avec succès.",
+      disponibilites: artisan.disponibilites,
+    });
+  } catch (error) {
+    console.error("Erreur lors de la récupération des disponibilités:", error);
+    res.status(500).json({ message: "Erreur lors de la récupération des disponibilités." });
+  }
+};
+
+// Supprimer une disponibilité
+export async function deleteDisponibiliteById(req, res) {
+  const { id } = req.params; // Récupérer l'_id de la disponibilité depuis la route
+  const artisanId = req.auth.artisanId; // Récupérer l'ID de l'artisan à partir du middleware d'authentification
+
+  try {
+    // Trouver l'artisan par ID
+    const artisan = await Artisans.findById(artisanId);
+    if (!artisan) {
+      return res.status(404).json({ message: "Artisan non trouvé." });
+    }
+
+    // Vérifier si la disponibilité existe
+    const disponibiliteExistante = artisan.disponibilites.find(
+      (disponibilite) => disponibilite._id.toString() === id
+    );
+    if (!disponibiliteExistante) {
+      return res.status(404).json({
+        message: "Disponibilité non trouvée.",
+      });
+    }
+
+    // Supprimer la disponibilité ciblée
+    artisan.disponibilites = artisan.disponibilites.filter(
+      (disponibilite) => disponibilite._id.toString() !== id
+    );
+
+    // Sauvegarder les modifications
+    await artisan.save();
+
+    res.status(200).json({
+      message: "Disponibilité supprimée avec succès.",
+      disponibilitesRestantes: artisan.disponibilites,
+    });
+  } catch (error) {
+    console.error("Erreur lors de la suppression de la disponibilité:", error);
+    res.status(500).json({ message: "Erreur lors de la suppression de la disponibilité." });
+  }
+}
+
