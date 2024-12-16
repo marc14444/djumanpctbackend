@@ -9,6 +9,8 @@ import artisanRoutes from "./Routes/artisanRoutes.js";
 import searchRoutes from "./Routes/searchRoutes.js";
 import metiersRoutes from "./Routes/metiersRoutes.js";
 import localitesRoutes from "./Routes/localitesRoutes.js";
+import likesRoutes from "./Routes/likesRoutes.js";
+import commentaireRoutes from "./Routes/commentaireRoutes.js";
 import bodyParser from 'body-parser';
 
 
@@ -43,6 +45,11 @@ app.use("/api/clients", clientsRoutes);
 //Artisan Routes
 app.use("/api/artisans", artisanRoutes);
 
+//Likes Routes
+app.use("/api/likes", likesRoutes);
+
+//Commentaire Routes
+app.use("/api/commentaire", commentaireRoutes);
 
 //Routes for metiers
 app.use("/api/metiers", metiersRoutes);

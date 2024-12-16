@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+
 const artisanSchema = new mongoose.Schema({
   nomArtisan: {
     type: String,
@@ -56,6 +57,12 @@ const artisanSchema = new mongoose.Schema({
       heureFin: { type: String, required: false }, // ex: '17:00'
     }
   ],
+  publications: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Publications",
+    },
+  ],  
   // Champ pour activer l'artisan après confirmation par email
   isActive: { type: Boolean, default: false },
   // Token pour l'activation du compte via l'email

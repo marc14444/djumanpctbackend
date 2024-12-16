@@ -1,26 +1,26 @@
 import mongoose from "mongoose";
 
-const commentaireSchema = mongoose.Schema({
+const commentairePubSchema = mongoose.Schema({
   idClient: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Client", // Référence à l'utilisateur (client) qui a commenté
+    ref: "Clients", // Référence à l'utilisateur (client) qui a commenté
     required: true,
   },
   idPublication: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Publications", // Référence à la publication sur laquelle le commentaire est fait
+    ref: "Publications", // Référence à la publication commentée
     required: true,
   },
-  commentaire: {
-    type: String,
-    required: true, // Le contenu du commentaire
+  texte: {
+    type: String, // Contenu du commentaire
+    required: [true, "Le texte du commentaire est obligatoire."],
   },
   createdAt: {
     type: Date,
-    default: Date.now, // Date de création du commentaire
+    default: Date.now, // Date du commentaire
   },
 });
 
-const Commentaire = mongoose.model("Commentaire", commentaireSchema);
+const CommentairePub = mongoose.model("Commentaire", commentairePubSchema);
 
-export default Commentaire;
+export default CommentairePub;
