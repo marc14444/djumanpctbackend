@@ -10,6 +10,7 @@ import {
   noteArtisan,
   demandeReinitialisationMotDePasse,
   reinitialiserMotDePasse,
+  getArtisanById,
 } from "../Controllers/clientsController.js";
 import authClients from "../middleware/authClients.js";
 import authAdmin from "../middleware/authAdmin.js";
@@ -48,4 +49,7 @@ router.post("/demande-reinitialisation", demandeReinitialisationMotDePasse);
 
 // Route pour réinitialiser le mot de passe
 router.post("/reinitialiser-mot-de-passe/:token", reinitialiserMotDePasse);
+
+// Route pour récupérer un artisan par son ID
+router.get("/get-artisan-by-id/:id", authClients, getArtisanById);
 export default router;

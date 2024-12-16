@@ -64,7 +64,7 @@ const artisanSchema = new mongoose.Schema({
     },
   ],  
   // Champ pour activer l'artisan après confirmation par email
-  isActive: { type: Boolean, default: false },
+  isActive: { type: Boolean, default: true },
   // Token pour l'activation du compte via l'email
   activationToken: { type: String, required: false },
   resetPasswordToken: { type: String },

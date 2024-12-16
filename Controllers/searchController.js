@@ -1,308 +1,107 @@
-import Search from "../Models/Search.js";
-import Clients from "../Models/Clients.js";
 import Artisans from "../Models/Artisans.js";
-import theDate from "../utils/generateDate.js";
 
-export const makeSearchClient = async (req, res) => {
-  const { terms } = req.body;
-  const adminId = req.auth.adminId;
+// Fonction pour calculer la distance entre deux points géographiques
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const toRadians = (degree) => (degree * Math.PI) / 180;
+  const R = 6371; // Rayon de la Terre en km
 
+  const dLat = toRadians(lat2 - lat1);
+  const dLon = toRadians(lat2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRadians(lat1)) *
+      Math.cos(toRadians(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c; // Distance en km
+}
+
+// Fonction pour convertir la distance en temps
+function convertDistanceToTime(distance, speed) {
+  const hours = distance / speed; // Temps en heures
+  return hours % 1 === 0 ? { hours: Math.floor(hours), minutes: 0 } : { hours: Math.floor(hours), minutes: Math.round((hours % 1) * 60) }; // Formater le temps en heures et minutes
+}
+
+// Contrôleur de recherche
+export const searchArtisans = async (req, res) => {
   try {
-    if (!terms) {
+    const { latitude, longitude, metier, rayon = 10, mode = "voiture" } = req.query;
+
+    if (!latitude || !longitude) {
       return res.status(400).json({
-        message: "Veuillez renseigner tous les champs",
-        status: false,
-      });
-    }
-    const searchResults = await Clients.find({
-      $or: [
-        { nomClient: { $regex: terms, $options: "i" } },
-        { prenomClient: { $regex: terms, $options: "i" } },
-        { telClient: { $regex: terms, $options: "i" } },
-      ],
-    });
-
-    if (!searchResults || searchResults.length === 0) {
-      return res.status(404).json({
-        message: "Aucun resultat",
-        status: false,
-      });
-    }
-    const search = new Search({
-      terms,
-      userId: adminId,
-      createdAt: theDate(),
-    });
-    await search.save();
-    res.status(200).json({
-      searchResults,
-      message: "Recherche reussie",
-      status: true,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: error,
-      message: "Une erreur est survenue",
-      status: false,
-    });
-  }
-};
-
-export const makeSearchArtisanForClient = async (req, res) => {
-  const { terms, adresse } = req.body;
-
-  try {
-    const userId = req.auth.clientId;
-    if (!userId) {
-      return res.status(400).json({
-        message: "Veuillez vous connecter",
-        status: false,
-      });
-    }
-    console.log(terms, adresse);
-
-    if (!terms || !adresse) {
-      return res.status(400).json({
-        message: "Veuillez renseigner tous les champs",
-        status: false,
+        message: "Les coordonnées (latitude, longitude) sont requises pour effectuer la recherche."
       });
     }
 
-    const searchResults = await Artisans.find({
-      local: { $regex: adresse, $options: "i" },
-      $or: [{ metier: { $regex: terms, $options: "i" } }],
+    // Convertir en nombres pour les calculs
+    const clientLat = parseFloat(latitude);
+    const clientLon = parseFloat(longitude);
+
+    // Définir la vitesse moyenne en fonction du mode de déplacement
+    const speeds = {
+      voiture: 60, // km/h
+      pied: 5 // km/h
+    };
+    const speed = speeds[mode] || speeds.voiture; // Utiliser la vitesse de la voiture par défaut
+
+    // Rechercher les artisans correspondant aux critères
+    const artisans = await Artisans.find({
+      metier: metier ? { $regex: metier, $options: "i" } : { $exists: true }
     });
 
-    if (!searchResults || searchResults.length === 0) {
-      return res.status(404).json({
-        searchResults,
-        message: "Aucun resultat",
-        status: false,
-      });
-    }
-    const search = new Search({
-      terms,
-      userId: userId,
-      createdAt: theDate(),
-    });
-    await search.save();
-    res.status(200).json({
-      searchResults,
-      message: "Recherche reussie",
-      status: true,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: error,
-      message: "Une erreur est survenue",
-      status: false,
-    });
-  }
-};
+    // Ajouter des logs pour vérifier les artisans trouvés
+    console.log(`Artisans trouvés pour le métier "${metier}":`, artisans);
 
-export const makeSearchArtisanForAdmin = async (req, res) => {
-  let { terms } = req.body;
-  terms = terms.toLowerCase();
-  const userId = req.auth.adminId;
-
-  try {
-    if (!terms) {
-      return res.status(400).json({
-        message: "Veuillez renseigner tous les champs",
-        status: false,
-      });
-    }
-
-    const searchResults = await Artisans.find({
-      $or: [
-        { nomArtisan: { $regex: terms, $options: "i" } },
-        { prenomArtisan: { $regex: terms, $options: "i" } },
-        { telArtisan: { $regex: terms, $options: "i" } },
-        { metier: { $regex: terms, $options: "i" } },
-      ],
+    // Calculer la distance et le temps pour chaque artisan
+    const artisansAvecDistanceEtTemps = artisans.map((artisan) => {
+      if (artisan.latitude && artisan.longitude) {
+        const distance = calculateDistance(
+          clientLat,
+          clientLon,
+          artisan.latitude,
+          artisan.longitude
+        ).toFixed(2); // Formater la distance avec deux chiffres après la virgule
+        const time = convertDistanceToTime(distance, speed); // Temps en heures et en minutes
+        return { ...artisan.toObject(), distance, time };
+      } else {
+        return { ...artisan.toObject(), distance: Infinity, time: { hours: "Infinity", minutes: "Infinity" } }; // Assigner une grande valeur pour les distances inconnues
+      }
     });
 
-    if (!searchResults || searchResults.length === 0) {
-      return res.status(404).json({
-        searchResults,
-        message: "Aucun resultat",
-        status: false,
-      });
-    }
-    const search = new Search({
-      terms,
-      userId: userId,
-      createdAt: theDate(),
-    });
-    await search.save();
-    res.status(200).json({
-      searchResults,
-      message: "Recherche reussie",
-      status: true,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: error,
-      message: "Une erreur est survenue",
-      status: false,
-    });
-  }
-};
+    // Filtrer par rayon (en km) et trier par distance croissante
+    let artisansFiltres = artisansAvecDistanceEtTemps
+      .filter((artisan) => artisan.distance <= rayon)
+      .sort((a, b) => a.distance - b.distance);
 
-export const getAllSearchByAdmin = async (req, res) => {
-  try {
-    const userId = req.auth.adminId;
+    // Si aucun artisan n'est trouvé dans le rayon, afficher tous les artisans du métier recherché
+    if (artisansFiltres.length === 0 && metier) {
+      artisansFiltres = artisansAvecDistanceEtTemps.filter((artisan) =>
+        artisan.metier.match(new RegExp(metier, "i"))
+      );
 
-    if (!userId) {
-      return res.status(400).json({
-        message: "Veuillez vous connecter",
-        status: false,
-      });
-    }
-
-    const searches = await Search.find({ userId: userId });
-
-    if (!searches || searches.length === 0) {
-      return res
-        .status(401)
-        .json({ searches, message: "Aucun historique de recherche !" });
+      if (artisansFiltres.length === 0) {
+        // Si aucun artisan ne correspond au métier recherché, retourner une réponse vide
+        return res.status(200).json({
+          message: "Aucun artisan trouvé correspondant au métier recherché.",
+          data: [],
+        });
+      } else {
+        // Retourner tous les artisans du métier recherché
+        return res.status(200).json({
+          message: "Aucun artisan trouvé à proximité, voici tous les artisans correspondant au métier recherché.",
+          data: artisansFiltres,
+        });
+      }
     }
 
     res.status(200).json({
-      searches,
-      message: "Recherche reussie",
-      status: true,
+      message: "Artisans trouvés avec succès.",
+      data: artisansFiltres
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      error: error,
-      message: "Une erreur est survenue",
-      status: false,
-    });
-  }
-};
-
-export const getAllSearchByClient = async (req, res) => {
-  try {
-    const userId = req.auth.clientId;
-
-    if (!userId) {
-      return res.status(400).json({
-        message: "Veuillez vous connecter",
-        status: false,
-      });
-    }
-
-    const searches = await Search.find({ userId: userId });
-
-    if (!searches || searches.length === 0) {
-      return res
-        .status(401)
-        .json({ searches, message: "Aucun historique de recherche !" });
-    }
-
-    res.status(200).json({
-      searches,
-      message: "Recherche reussie",
-      status: true,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: error,
-      message: "Une erreur est survenue",
-      status: false,
-    });
-  }
-};
-
-export const getAllSearchInDB = async (req, res) => {
-  try {
-    const searches = await Search.find();
-
-    if (!searches || searches.length === 0) {
-      res.status(404).json({ message: "Aucune donnée", status: false });
-    }
-
-    res.status(200).json({
-      data: searches,
-      message: "Donnée recupérées avec succès",
-      status: false,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Une erreur est survenue", status: false });
-  }
-};
-
-export const deleteOneSearchAdmin = async (req, res) => {
-  const { idSearch } = req.params;
-  const adminId = req.auth.adminId;
-  try {
-    const search = await Search.findById(idSearch);
-    if (!search) {
-      return res.status(404).json({
-        message: "Cet historique de recherche n'existe pas",
-        status: false,
-      });
-    }
-    if (search.userId !== adminId) {
-      return res.status(401).json({
-        message:
-          "Veuillez vous n'êtes pas autorisé à supprimer cet historique de recherche",
-        status: false,
-      });
-    }
-    await Search.findByIdAndDelete(idSearch);
-    res.status(200).json({
-      search,
-      message: `Historique de recherche ${search.terms} a été supprimé avec succès !`,
-      status: true,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: error,
-      message: "Une erreur est survenue",
-      status: false,
-    });
-  }
-};
-
-export const deleteOneSearchClient = async (req, res) => {
-  const { idSearch } = req.params;
-  const clientId = req.auth.clientId;
-  try {
-    const search = await Search.findById(idSearch);
-    if (!search) {
-      return res.status(404).json({
-        message: "Cet historique de recherche n'existe pas",
-        status: false,
-      });
-    }
-    if (search.userId !== clientId) {
-      return res.status(401).json({
-        message:
-          "Veuillez vous n'êtes pas autorisé à supprimer cet historique de recherche",
-        status: false,
-      });
-    }
-    await Search.findByIdAndDelete(idSearch);
-    res.status(200).json({
-      search,
-      message: `Historique de recherche ${search.terms} a été supprimé avec succès !`,
-      status: true,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: error,
-      message: "Une erreur est survenue",
-      status: false,
-    });
+    res.status(500).json({ message: "Erreur interne du serveur." });
   }
 };

@@ -553,3 +553,26 @@ export async function reinitialiserMotDePasse(req, res) {
     });
   }
 }
+
+// Récupérer un artisan par son ID
+export async function getArtisanById(req, res) {
+  try {
+    const id = req.params.id;
+    const artisan = await Artisans.findById(id);
+    if (!artisan) {
+      return res.status(404).json({
+        error: "Artisan introuvable",
+        message: "Artisan introuvable",
+        status: false,
+      });
+    }
+    return res.status(200).json({
+      artisan,
+      message: "Artisan récupéré avec succès",
+      status: true,
+    });
+  } catch (error) {
+    console.error("Erreur lors de la récupération de l'artisan:", error);
+    return res.status(500).json({ message: "Une erreur est survenue", status: false });
+  }
+}
