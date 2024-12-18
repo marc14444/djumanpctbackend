@@ -39,17 +39,20 @@ const artisanSchema = new mongoose.Schema({
   experience: { type: Number, required: true },
   fermeture: { type: String, required: true },
   ouverture: { type: String, required: true },
-  notes: [
+  reviews: [
     {
-      note: { type: Number, required: false, default: 0 },
-      userId: {
+      clientId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Client",
+        ref: "Clients",
         required: true,
       },
+      commentaire: { type: String, default: "" },
+      note: { type: Number, required: true, min: 1, max: 5 },
+      createdAt: { type: Date, default: Date.now },
     },
   ],
-  noteCount: { type: Number, required: false, default: 0 },
+  averageNote: { type: Number, default: 0 }, // Calculée dynamiquement
+  noteCount: { type: Number, default: 0 }, // Nombre total de notes
   disponibilites: [
     {
       jour: { type: String, required: false }, // ex: 'Lundi', 'Mardi', etc.

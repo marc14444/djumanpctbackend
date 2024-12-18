@@ -4,40 +4,58 @@ import Admin from "../Models/Admin.js";
 import Clients from "../Models/Clients.js";
 import Artisans from "../Models/Artisans.js";
 
-export const addAmin = async (req, res) => {
+// Ajouter un administrateur
+export const addAdmin = async (req, res) => {
   try {
-    const countAdmin = await Admin.find().count();
+    const { username, password } = req.body;
 
-    if (countAdmin > 0) {
-      return res.status(400).json({
-        message: "Impossible de creer un compte administrateur",
-        status: false,
+    // Validation des données
+    if (!username || !password) {
+      return res
+        .status(400)
+        .json({ message: "Le nom d'utilisateur et le mot de passe sont obligatoires." });
+    }
+
+    // Vérifier le nombre d'administrateurs existants
+    const adminCount = await Admin.countDocuments();
+    if (adminCount >= 2) {
+      return res.status(403).json({
+        message: "La limite de 2 administrateurs est atteinte. Aucun autre administrateur ne peut être ajouté.",
       });
     }
 
-    if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD) {
+    // Vérifier si le nom d'utilisateur existe déjà
+    const existingAdmin = await Admin.findOne({ username });
+    if (existingAdmin) {
       return res.status(400).json({
-        message: "Veuillez configurer les variables d'environnement",
-        status: false,
+        message: "Ce nom d'utilisateur est déjà utilisé.",
       });
     }
 
-    const admin = new Admin({
-      username: process.env.ADMIN_USERNAME,
-      password: process.env.ADMIN_PASSWORD,
+    // Hachage du mot de passe
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Création de l'administrateur
+    const newAdmin = new Admin({
+      username,
+      password: hashedPassword,
     });
-    console.log(admin.password);
-    const hasedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
-    admin.password = hasedPassword;
 
-    await admin.save();
-    res.status(200).json({ message: "Admin ajoute avec succes", status: true });
+    await newAdmin.save();
+
+    res.status(201).json({
+      message: "Administrateur créé avec succès.",
+      admin: {
+        id: newAdmin._id,
+        username: newAdmin.username,
+        role: newAdmin.role,
+      },
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: error.message, status: false });
+    res.status(500).json({ message: "Erreur serveur.", error });
   }
 };
-
+//connexion d'un administrateur
 export const signinAdmin = async (req, res) => {
   try {
     const { username, password } = req.body;

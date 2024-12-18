@@ -77,5 +77,4 @@ router.put('/publications/:idPublication', authArtisan, updatePublication);
 // Route pour supprimer une publication
 router.delete('/publications/:idPublication', authArtisan, deletePublication);
 
-
 export default router;

@@ -11,6 +11,9 @@ import metiersRoutes from "./Routes/metiersRoutes.js";
 import localitesRoutes from "./Routes/localitesRoutes.js";
 import likesRoutes from "./Routes/likesRoutes.js";
 import commentaireRoutes from "./Routes/commentaireRoutes.js";
+import rendezvousRoutes from "./Routes/rendezvousRoutes.js";
+import notesRoutes from "./Routes/notesRoutes.js";
+import temoignageRoutes from "./Routes/temoignageRoutes.js";
 import bodyParser from 'body-parser';
 
 
@@ -56,6 +59,16 @@ app.use("/api/metiers", metiersRoutes);
 
 //Routes for search
 app.use("/api/search", searchRoutes);
+
+//Routes for rendezvous
+app.use("/api/rendezvous", rendezvousRoutes);
+
+//Routes for notes
+app.use("/api/notes", notesRoutes);
+
+//Routes for temoignages
+app.use("/api/temoignages", temoignageRoutes);
+
 //Routes for localites
 app.use("/api/localites", localitesRoutes);
 // Routes for assets

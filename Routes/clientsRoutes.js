@@ -52,4 +52,5 @@ router.post("/reinitialiser-mot-de-passe/:token", reinitialiserMotDePasse);
 
 // Route pour récupérer un artisan par son ID
 router.get("/get-artisan-by-id/:id", authClients, getArtisanById);
+
 export default router;

@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 import {
-  addAmin,
+  addAdmin,
   signinAdmin,
   getAllAdmin,
   getAdmin,
@@ -22,7 +22,7 @@ const upload = multer();
 const router = express.Router();
 
 //Routes for add administrator
-router.post("/addAdmin", upload.any(), addAmin);
+router.post("/addAdmin", addAdmin);
 
 //Routes for signin administrator
 router.post("/signinAdmin", upload.any(), signinAdmin);
