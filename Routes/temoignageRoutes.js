@@ -19,6 +19,6 @@ router.put('/modif-temoignages/:idTemoignage', modifierTemoignage);
 router.delete('/del-temoignages/:idTemoignage', supprimerTemoignage);
 
 //Route pour récupérer tous les temoignages
-router.get('/get-temoignages', authAdmin, getTemoignages);
+router.get('/get-temoignages', getTemoignages);
 
 export default router;

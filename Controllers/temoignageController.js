@@ -86,12 +86,12 @@ export const modifierTemoignage = async (req, res) => {
   };
 
   // Middleware pour vérifier le rôle d'administrateur
-  const verifyAdmin = (req, res, next) => {
+/*   const verifyAdmin = (req, res, next) => {
     if (req.auth.role !== 'admin') {
       return res.status(403).json({ message: 'Accès refusé : vous devez être administrateur pour accéder à cette ressource.' });
     }
     next();
-  };
+  }; */
   
   // Récupérer les témoignages
   export const getTemoignages = async (req, res) => {
