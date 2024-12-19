@@ -35,7 +35,7 @@
     "node-webcam": "^0.8.2",
     "nodemailer": "^6.9.16",
     "nodemon": "^3.0.3",
-    "socket.io": "^4.7.5",
+    "socket.io": "^4.8.1",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
