@@ -92,6 +92,15 @@ app.use("/api/devis", devisRoutes);
 
 //Routes for localites
 app.use("/api/localites", localitesRoutes);
+
+//routes pour la production
+app.use("/api/production", (req, res) => {
+  return res.status(200).json({
+    message: "API de production toutes les routes de prodution ici",
+    status: "ok",
+  });
+});
+
 // Routes for assets
 app.use(
   "/assets/photos_artisans",
