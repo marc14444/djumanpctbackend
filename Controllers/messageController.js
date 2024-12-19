@@ -58,3 +58,100 @@ export const updateMessage = async (req, res) => {
   }
 };
 
+//répondre à un message
+export const answerMessage = async (req, res) => {
+  const { messageId, answer } = req.body;
+
+  try {
+    const message = await Messages.findByIdAndUpdate(messageId, { answer });
+    res.status(200).json(message);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur lors de la réponse au message.", error });
+  }
+};
+
+//récupérer les messages non lus d'une conversation
+export const getUnreadMessages = async (req, res) => {
+  const { conversationId } = req.params;
+
+  try {
+    const messages = await Messages.find({ conversationId, read: false }).sort({ createdAt: 1 });
+    res.status(200).json(messages);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur lors de la récupération des messages non lus.", error });
+  }
+};
+
+//marquer un message comme lu
+export const markMessageAsRead = async (req, res) => {
+  const { messageId } = req.params;
+
+  try {
+    const message = await Messages.findByIdAndUpdate(messageId, { read: true });
+    res.status(200).json(message);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur lors de la modification du message comme lu.", error });
+  }
+};
+
+//récupérer les messages d'une conversation avec un utilisateur
+export const getMessagesByUser = async (req, res) => {
+  const { conversationId, userId } = req.params;
+
+  try {
+    const messages = await Messages.find({ conversationId, sender: userId }).sort({ createdAt: 1 });
+    res.status(200).json(messages);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur lors de la récupération des messages d'une conversation avec un utilisateur.", error });
+  }
+};
+
+//récupérer les messages d'une conversation avec un artisan
+export const getMessagesByArtisan = async (req, res) => {
+  const { conversationId, artisanId } = req.params;
+
+  try {
+    const messages = await Messages.find({ conversationId, sender: artisanId }).sort({ createdAt: 1 });
+    res.status(200).json(messages);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur lors de la récupération des messages d'une conversation avec un artisan.", error });
+  }
+};
+
+//récupérer les messages recu d'une conversation avec un client
+export const getMessagesByClient = async (req, res) => {
+  const { conversationId, clientId } = req.params;
+
+  try {
+    const messages = await Messages.find({ conversationId, sender: clientId }).sort({ createdAt: 1 });
+    res.status(200).json(messages);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur lors de la récupération des messages d'une conversation avec un client.", error });
+  }
+};
+
+//récupérer les messages envoyés d'une conversation avec un client
+export const getMessagesByClientSent = async (req, res) => {
+  const { conversationId, clientId } = req.params;
+
+  try {
+    const messages = await Messages.find({ conversationId, receiver: clientId }).sort({ createdAt: 1 });
+    res.status(200).json(messages);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur lors de la récupération des messages envoyés d'une conversation avec un client.", error });
+  }
+};
+
+//récupérer les messages envoyés d'une conversation avec un artisan
+export const getMessagesByArtisanSent = async (req, res) => {
+  const { conversationId, artisanId } = req.params;
+
+  try {
+    const messages = await Messages.find({ conversationId, receiver: artisanId }).sort({ createdAt: 1 });
+    res.status(200).json(messages);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur lors de la récupération des messages envoyés d'une conversation avec un artisan.", error });
+  }
+};
+
+
