@@ -36,6 +36,7 @@
     "nodemailer": "^6.9.16",
     "nodemon": "^3.0.3",
     "socket.io": "^4.8.1",
+    "swagger": "^0.7.5",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
