@@ -1,4 +1,3 @@
-// controllers/projetController.js
 import Projet from "../Models/Projet.js";
 
 // Soumettre un projet

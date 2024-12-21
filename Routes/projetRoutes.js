@@ -6,7 +6,7 @@ import {
     getProjetById, 
     getProjetsByClientId,
 
-} from '../Controllers/projetController';
+} from '../Controllers/projetController.js';
 
 const router = express.Router();
 
