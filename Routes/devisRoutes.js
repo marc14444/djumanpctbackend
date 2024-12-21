@@ -8,7 +8,7 @@ import {
         refuserDevis,
         modifierDevis,
         supprimerDevis,
-    } from '../controllers/devisController.js';
+    } from '../Controllers/devisController.js';
 const router = express.Router();
 
 // POST - proposer un devis pour un projet
