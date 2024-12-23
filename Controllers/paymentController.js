@@ -1,5 +1,5 @@
 // controllers/paymentController.js
-import stripe from '../config/stripe.js';
+//import stripe from '../config/stripe.js';
 
 export const createPaymentSession = async (req, res) => {
   try {
