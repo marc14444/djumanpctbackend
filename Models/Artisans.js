@@ -65,7 +65,9 @@ const artisanSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "Publications",
     },
-  ],  
+  ], 
+  language: { type: String, default: 'fr' },
+  dateDerniereConnexion: { type: Date, default: Date.now() },
   // Champ pour activer l'artisan après confirmation par email
   isActive: { type: Boolean, default: true },
   // Token pour l'activation du compte via l'email

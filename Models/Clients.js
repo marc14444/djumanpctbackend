@@ -28,6 +28,8 @@ let clientsSchema = mongoose.Schema({
     type: String, 
     default: null // Si aucun upload d'image, la valeur sera `null` 
   },
+  language: { type: String, default: 'fr' },
+  dateDerniereConnexion: { type: Date, default: Date.now() },
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date },
   createdAt: { type: Date, default: Date.now() },

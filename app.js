@@ -2,6 +2,9 @@ import express from "express";
 // import Gemini from "gemini-ai";
 import dotenv from "dotenv";
 import cors from "cors";
+import cookieParser from "cookie-parser";
+import i18next from './i18n.js'; // Importer la configuration i18next 
+import i18nextMiddleware from 'i18next-http-middleware';
 import connectDB from "./config/db.js";
 import { setupSwagger } from './swagger.js';
 import adminRoutes from "./Routes/adminRoutes.js";
@@ -19,6 +22,9 @@ import ConversationRoutes from "./Routes/conversationRoutes.js";
 import MessageRoutes from "./Routes/messagesRoutes.js";
 import projetRoutes from "./Routes/projetRoutes.js";
 import devisRoutes from "./Routes/devisRoutes.js";
+import translationRoutes from "./Routes/languageRoutes.js";
+import orderRoutes from "./Routes/orderRoutes.js";
+import paymentRoutes from "./Routes/paymentRoutes.js";
 
 import bodyParser from 'body-parser';
 
@@ -38,6 +44,8 @@ const __dirname = path.dirname(__filename);
 app.use(cors());
 
 app.use(express.json());
+app.use(cookieParser());
+app.use(i18nextMiddleware.handle(i18next));
 app.use(express.urlencoded({ extended: false }));
 
 //initalisé swagger
@@ -92,6 +100,15 @@ app.use("/api/devis", devisRoutes);
 
 //Routes for localites
 app.use("/api/localites", localitesRoutes);
+
+//Routes for translations
+app.use("/api/translations", translationRoutes);
+
+//Routes for orders
+app.use("/api/orders", orderRoutes);
+
+//Routes for payments
+app.use("/api/payments", paymentRoutes);
 
 //routes pour la production
 app.use("/api/production", (req, res) => {

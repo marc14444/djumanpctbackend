@@ -243,7 +243,7 @@ export const updateClientProfil = async (req, res) => {
 export const loginClient = async (req, res) => {
   try {
     const { telClient, passwordClient } = req.body;
-    // Vérification des champs
+    // Vérification des champs
     if (!telClient || !passwordClient) {
       return res.status(400).json({
         message: "Veuillez renseigner tous les champs",
@@ -259,10 +259,7 @@ export const loginClient = async (req, res) => {
       });
     }
 
-    const isPasswordValid = await bcrypt.compare(
-      passwordClient,
-      client.passwordClient
-    );
+    const isPasswordValid = await bcrypt.compare(passwordClient, client.passwordClient);
     if (!isPasswordValid) {
       return res.status(400).json({
         message: "Mot de passe incorrect !",
@@ -273,10 +270,12 @@ export const loginClient = async (req, res) => {
     const token = jwt.sign({ clientId: client._id }, "RANDOM_TOKEN_SECRET", {
       expiresIn: "24h",
     });
+
+    res.cookie('token', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }); // Définir le cookie avec le token
+
     res.status(200).json({
       data: client,
-      message: "Connexion reussie !",
-      token,
+      message: "Connexion réussie !",
       status: true,
     });
   } catch (error) {
@@ -284,6 +283,7 @@ export const loginClient = async (req, res) => {
     res.status(500).json({ message: "Une erreur est survenue", status: false });
   }
 };
+
 
 // Afficher le client connecté
 export const getClientConnected = async (req, res) => {
