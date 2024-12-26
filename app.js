@@ -42,11 +42,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Configuration CORS 
-app.use(cors({ 
-  origin: "*",
+app.use(cors({
+  origin: ['https://djumanci.netlify.app', 'https://djumanpctbackend.onrender.com', 'http://localhost:4000'],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS','PATCH'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
 }));
+
 
 
 app.use(express.json());
