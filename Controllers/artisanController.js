@@ -11,11 +11,37 @@ import path from "path";
 import { v4 as uuidv4 } from "uuid"; // Pour générer un identifiant unique
 import crypto from "crypto";
 import fs from 'fs';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
 const code = generateRandomCode();
 
+// Définir __dirname pour les modules ES
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Fonction pour supprimer les fichiers téléchargés
+const deleteUploadedFiles = (files) => {
+  if (files) {
+    Object.values(files).forEach(fileArray => {
+      fileArray.forEach(file => {
+        if (file && file.filename) {
+          const filePath = path.join(__dirname, '..', 'uploads', file.filename);
+          fs.unlink(filePath, (err) => {
+            if (err) {
+              console.error(`Erreur lors de la suppression du fichier : ${file.filename}`, err);
+            }
+          });
+        } else {
+          console.error('Le fichier téléchargé n\'a pas de propriété filename', file);
+        }
+      });
+    });
+  }
+};
+
+// Intégration de la fonction dans ton contrôleur
 export const signupArtisan = async (req, res) => {
   try {
     const {
@@ -163,6 +189,9 @@ export const signupArtisan = async (req, res) => {
     res.status(500).json({ message: "Une erreur est survenue", status: false });
   }
 };
+
+
+
 
 
 export const loginArtisan = async (req, res) => {
