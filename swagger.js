@@ -12,7 +12,7 @@ const options = {
     },
     servers: [
       {
-        url: 'https://djumanpctbackend.onrender.com/api',
+        url: 'http://localhost:4000/api',
       },
     ],
   },
