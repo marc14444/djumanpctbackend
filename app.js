@@ -43,6 +43,13 @@ const __dirname = path.dirname(__filename);
 
 app.use(cors());
 
+// Ou, pour spécifier les origines autorisées 
+app.use(cors({
+   origin: ['http://localhost:4000', 'https://djumanpctbackend.onrender.com'], credentials: true 
+   })
+);
+
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(i18nextMiddleware.handle(i18next));
