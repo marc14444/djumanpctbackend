@@ -42,7 +42,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Configuration CORS 
-app.use(cors({ origin: ['http://localhost:4000', 'https://djumanpctbackend.onrender.com'], credentials: true }));
+app.use(cors({ 
+  origin: ['http://localhost:4000', 'https://djumanpctbackend.onrender.com'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS','PATCH'],
+  origin: '*',
+}));
 
 
 app.use(express.json());
