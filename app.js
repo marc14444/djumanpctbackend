@@ -43,10 +43,9 @@ const __dirname = path.dirname(__filename);
 
 // Configuration CORS 
 app.use(cors({ 
-  origin: ['http://localhost:4000', 'https://djumanpctbackend.onrender.com'],
+  origin: "*",
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS','PATCH'],
-  origin: '*',
 }));
 
 
