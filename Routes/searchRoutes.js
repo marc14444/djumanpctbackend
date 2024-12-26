@@ -1,5 +1,5 @@
 import express from "express";
-import authArtisan from "../middleware/authArtisan.js";
+import autClient from "../middleware/authClients.js";
 import { searchArtisans } from "../Controllers/searchController.js";
 
 const router = express.Router();
@@ -54,7 +54,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.get("/get-artisans-by-search", authArtisan, searchArtisans);
+router.get("/get-artisans-by-search", autClient, searchArtisans);
 
 
 //exemple de requête : http://localhost:3000/search?latitude=48.8566140&longitude=2.3522219&metier=tailleur&rayon=10&mode=voiture

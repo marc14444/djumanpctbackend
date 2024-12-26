@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // Créer une instance du client S3
-const s3 = new S3Client({ region: process.env.AWS_REGION });
+const s3 = new S3Client({ region: process.env.AWS_REGION || 'eu-north-1' });
 
 export const s3Uploadv2 = async (file, fileName) => {
     if (!fileName) {
